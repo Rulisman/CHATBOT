@@ -79,7 +79,7 @@ const App: React.FC = () => {
       let errorMsg = "Lo siento, ha ocurrido un error al conectar con el servidor.";
       
       if (error.message === "API_KEY_MISSING") {
-        errorMsg = "Error de configuración: La API_KEY no ha sido añadida en las variables de entorno de Vercel.";
+        errorMsg = "Error de configuración: No se detecta API_KEY ni GEMINI_API_KEY en Vercel. Por favor, revisa las variables de entorno.";
       }
 
       setMessages(prev => prev.map(msg => 
