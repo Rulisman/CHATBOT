@@ -8,6 +8,7 @@ import ChatInterface from './components/ChatInterface';
 const DEFAULT_MASTER_PROMPT = "Eres el asistente oficial de Càmping Paradís. Tu objetivo es resolver dudas de forma clara, elegante y amable. Presenta la información siempre de forma ordenada, utilizando listas si hay varias opciones y asegurándote de que el texto sea fácil de leer en dispositivos móviles. Si no tienes un dato concreto en los archivos, sé honesto y ofrece el contacto directo del camping.";
 
 const App: React.FC = () => {
+  // Estado inicial recuperado de LocalStorage si existe
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -16,11 +17,30 @@ const App: React.FC = () => {
       timestamp: Date.now()
     }
   ]);
-  const [knowledgeFiles, setKnowledgeFiles] = useState<KnowledgeFile[]>([]);
-  const [masterPrompt, setMasterPrompt] = useState<string>(DEFAULT_MASTER_PROMPT);
+
+  const [knowledgeFiles, setKnowledgeFiles] = useState<KnowledgeFile[]>(() => {
+    const saved = localStorage.getItem('cp_knowledge_files');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [masterPrompt, setMasterPrompt] = useState<string>(() => {
+    const saved = localStorage.getItem('cp_master_prompt');
+    return saved || DEFAULT_MASTER_PROMPT;
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // Efecto para persistir cambios en el conocimiento
+  useEffect(() => {
+    localStorage.setItem('cp_knowledge_files', JSON.stringify(knowledgeFiles));
+  }, [knowledgeFiles]);
+
+  // Efecto para persistir cambios en el prompt maestro
+  useEffect(() => {
+    localStorage.setItem('cp_master_prompt', masterPrompt);
+  }, [masterPrompt]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -30,8 +50,10 @@ const App: React.FC = () => {
     if (hasAdminParam || hasStoredAuth) {
       setIsAuthorized(true);
       localStorage.setItem('cp_admin_auth', 'true');
+      // Si entramos por URL, limpiamos el parámetro para que la URL quede limpia
       if (hasAdminParam) {
         window.history.replaceState({}, document.title, window.location.pathname);
+        setIsAdminMode(true); // Abrimos el panel automáticamente al entrar por primera vez
       }
     }
   }, []);
