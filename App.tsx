@@ -6,7 +6,7 @@ import Header from './components/Header';
 import KnowledgeSidebar from './components/KnowledgeSidebar';
 import ChatInterface from './components/ChatInterface';
 
-const DEFAULT_MASTER_PROMPT = "Eres el asistente oficial de Càmping Platja Brava. Tu objetivo es resolver dudas de forma clara, elegante y amable. Presenta la información siempre de forma ordenada, utilizando listas si hay varias opciones y asegurándote de que el texto sea fácil de leer en dispositivos móviles. Si no tienes un dato concreto en los archivos, sé honesto y ofrece el contacto directo del camping.";
+const DEFAULT_MASTER_PROMPT = "Eres el asistente oficial de Càmping Paradís. Tu objetivo es resolver dudas de forma clara, elegante y amable. Presenta la información siempre de forma ordenada, utilizando listas si hay varias opciones y asegurándote de que el texto sea fácil de leer en dispositivos móviles. Si no tienes un dato concreto en los archivos, sé honesto y ofrece el contacto directo del camping.";
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
