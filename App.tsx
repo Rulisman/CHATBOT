@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Message, KnowledgeFile } from './types';
 import { sendMessageStreamToGemini } from './services/geminiService';
@@ -23,17 +22,14 @@ const App: React.FC = () => {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Lógica para detectar acceso de administrador "secreto"
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const hasAdminParam = params.has('admin'); // Puedes cambiar 'admin' por una clave más secreta como 'setup_dev'
+    const hasAdminParam = params.has('admin');
     const hasStoredAuth = localStorage.getItem('cp_admin_auth') === 'true';
 
     if (hasAdminParam || hasStoredAuth) {
       setIsAuthorized(true);
       localStorage.setItem('cp_admin_auth', 'true');
-      
-      // Limpiar el parámetro de la URL para que no sea obvio
       if (hasAdminParam) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -78,10 +74,16 @@ const App: React.FC = () => {
         ));
         if (isLoading) setIsLoading(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat Error:", error);
+      let errorMsg = "Lo siento, ha ocurrido un error al conectar con el servidor.";
+      
+      if (error.message === "API_KEY_MISSING") {
+        errorMsg = "Error de configuración: La API_KEY no ha sido añadida en las variables de entorno de Vercel.";
+      }
+
       setMessages(prev => prev.map(msg => 
-        msg.id === aiMessageId ? { ...msg, text: "Lo siento, ha ocurrido un error al conectar con el servidor." } : msg
+        msg.id === aiMessageId ? { ...msg, text: errorMsg } : msg
       ));
     } finally {
       setIsLoading(false);
